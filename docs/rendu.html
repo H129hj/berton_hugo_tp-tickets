@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>TP Mise en production - Application de tickets - Hugo BERTON</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm; }
+  body { font-family: Helvetica, Arial, sans-serif; font-size: 10.5pt; color: #1f2937; line-height: 1.4; }
+  h1 { font-size: 18pt; margin: 0 0 2px; color: #1e3a8a; }
+  h2 { font-size: 13pt; color: #1e3a8a; border-bottom: 1px solid #c7d2fe; padding-bottom: 3px; margin: 18px 0 8px; }
+  h3 { font-size: 11pt; margin: 12px 0 4px; }
+  .meta { color: #6b7280; margin: 0 0 10px; }
+  table { border-collapse: collapse; width: 100%; margin: 6px 0; }
+  th, td { border: 1px solid #d1d5db; padding: 4px 7px; text-align: left; vertical-align: top; }
+  th { background: #eef2ff; }
+  code { font-family: Menlo, Consolas, monospace; font-size: 9pt; background: #f3f4f6; padding: 0 3px; border-radius: 3px; }
+  a { color: #1e40af; }
+  ul { margin: 4px 0; padding-left: 18px; }
+  .schema { text-align: center; margin: 8px 0; }
+  .saut { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<h1>Application web de gestion de tickets</h1>
+<p class="meta">TP Mise en production &amp; Hébergement · Ynov B2 Informatique · Hugo BERTON · 19-20 novembre 2026</p>
+
+<h2>1. Liens (livrables 1 et 2)</h2>
+<table>
+  <tr><th>Frontend (interface publique)</th><td><a href="https://h129hj.github.io/berton_hugo_tp-tickets/">https://h129hj.github.io/berton_hugo_tp-tickets/</a></td></tr>
+  <tr><th>API</th><td><a href="https://hugo-tickets-api.osc-fr1.scalingo.io/api/tickets">https://hugo-tickets-api.osc-fr1.scalingo.io/api/tickets</a></td></tr>
+  <tr><th>Santé de l'API</th><td><a href="https://hugo-tickets-api.osc-fr1.scalingo.io/health">https://hugo-tickets-api.osc-fr1.scalingo.io/health</a></td></tr>
+  <tr><th>Documentation Swagger</th><td><a href="https://hugo-tickets-api.osc-fr1.scalingo.io/docs">https://hugo-tickets-api.osc-fr1.scalingo.io/docs</a></td></tr>
+  <tr><th>Dépôt GitHub (code + README)</th><td><a href="https://github.com/H129hj/berton_hugo_tp-tickets">https://github.com/H129hj/berton_hugo_tp-tickets</a></td></tr>
+</table>
+
+<h2>2. Schéma d'architecture (livrable 3)</h2>
+<div class="schema">
+<svg width="640" height="270" viewBox="0 0 640 270" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif" font-size="11">
+  <defs>
+    <marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#374151"/></marker>
+  </defs>
+  <!-- navigateur -->
+  <rect x="10" y="105" width="120" height="60" rx="8" fill="#f9fafb" stroke="#374151"/>
+  <text x="70" y="131" text-anchor="middle" font-weight="bold">Navigateur</text>
+  <text x="70" y="148" text-anchor="middle">utilisateur</text>
+  <!-- github -->
+  <rect x="190" y="10" width="200" height="110" rx="8" fill="#eef2ff" stroke="#4338ca" stroke-dasharray="4 3"/>
+  <text x="290" y="27" text-anchor="middle" fill="#4338ca" font-weight="bold">GitHub</text>
+  <rect x="205" y="38" width="170" height="34" rx="6" fill="#fff" stroke="#4338ca"/>
+  <text x="290" y="53" text-anchor="middle" font-weight="bold">Frontend · GitHub Pages</text>
+  <text x="290" y="66" text-anchor="middle">HTML, CSS, JavaScript</text>
+  <rect x="205" y="78" width="170" height="34" rx="6" fill="#fff" stroke="#4338ca"/>
+  <text x="290" y="93" text-anchor="middle" font-weight="bold">Dépôt + GitHub Actions</text>
+  <text x="290" y="106" text-anchor="middle">CI : ruff + pytest</text>
+  <!-- scalingo -->
+  <rect x="190" y="140" width="440" height="120" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-dasharray="4 3"/>
+  <text x="410" y="157" text-anchor="middle" fill="#c2410c" font-weight="bold">Scalingo (osc-fr1)</text>
+  <rect x="205" y="170" width="180" height="70" rx="6" fill="#fff" stroke="#c2410c"/>
+  <text x="295" y="190" text-anchor="middle" font-weight="bold">Backend · API FastAPI</text>
+  <text x="295" y="206" text-anchor="middle">app hugo-tickets-api</text>
+  <text x="295" y="221" text-anchor="middle">uvicorn, conteneur S</text>
+  <rect x="445" y="170" width="170" height="70" rx="6" fill="#fff" stroke="#c2410c"/>
+  <text x="530" y="190" text-anchor="middle" font-weight="bold">Base PostgreSQL</text>
+  <text x="530" y="206" text-anchor="middle">addon Starter 512</text>
+  <text x="530" y="221" text-anchor="middle">table tickets</text>
+  <!-- fleches -->
+  <line x1="130" y1="118" x2="203" y2="58" stroke="#374151" marker-end="url(#f)"/>
+  <text x="20" y="72" fill="#374151">1. HTTPS : pages</text>
+  <line x1="130" y1="152" x2="203" y2="200" stroke="#374151" marker-end="url(#f)"/>
+  <text x="70" y="196" fill="#374151">2. HTTPS : fetch JSON</text>
+  <text x="70" y="209" fill="#374151">/api/tickets</text>
+  <line x1="385" y1="205" x2="443" y2="205" stroke="#374151" marker-end="url(#f)"/>
+  <text x="414" y="198" text-anchor="middle" fill="#374151">3. SQL</text>
+  <line x1="375" y1="100" x2="300" y2="168" stroke="#4338ca" stroke-dasharray="3 3" marker-end="url(#f)"/>
+  <text x="400" y="132" fill="#4338ca">push main + CI verte → déploiement auto</text>
+</svg>
+</div>
+<table>
+  <tr><th>Tier</th><th>Rôle</th><th>Techno</th><th>Hébergement</th></tr>
+  <tr><td>Frontend</td><td>liste, formulaire, changement de statut</td><td>HTML, CSS, JavaScript (fetch)</td><td>GitHub Pages</td></tr>
+  <tr><td>Backend</td><td>API REST JSON, validation, seul accès à la base</td><td>Python 3.12, FastAPI, psycopg 3</td><td>Scalingo, conteneur S</td></tr>
+  <tr><td>Base de données</td><td>stockage persistant de la table <code>tickets</code></td><td>PostgreSQL</td><td>addon PostgreSQL Scalingo</td></tr>
+  <tr><td>Code source</td><td>versionnement, CI</td><td>Git, GitHub Actions</td><td>GitHub</td></tr>
+</table>
+
+<h3>API</h3>
+<table>
+  <tr><th>Méthode</th><th>Route</th><th>Rôle</th><th>Codes</th></tr>
+  <tr><td>GET</td><td><code>/health</code></td><td>vérifie l'API et la connexion à la base</td><td>200, 503</td></tr>
+  <tr><td>GET</td><td><code>/api/tickets?statut=&amp;q=</code></td><td>liste (filtre par statut, recherche)</td><td>200</td></tr>
+  <tr><td>POST</td><td><code>/api/tickets</code></td><td>crée un ticket (titre, description, priorité)</td><td>201, 422</td></tr>
+  <tr><td>PATCH</td><td><code>/api/tickets/{id}</code></td><td>change le statut : ouvert, en_cours, resolu</td><td>200, 404, 422</td></tr>
+  <tr><td>DELETE</td><td><code>/api/tickets/{id}</code></td><td>supprime un ticket (bonus)</td><td>204, 404</td></tr>
+</table>
+<p>Table <code>tickets</code> : <code>id</code> (SERIAL), <code>titre</code> (VARCHAR 120), <code>description</code> (TEXT), <code>statut</code> (contrainte CHECK sur les 3 valeurs), <code>priorite</code>, <code>created_at</code> (TIMESTAMPTZ).
+Bonus réalisés : suppression, filtre par statut, recherche par mot-clé, priorité, date de création.</p>
+
+<h2>3. Compte rendu technique (livrable 4)</h2>
+
+<h3>Choix d'hébergement</h3>
+<ul>
+  <li><b>Frontend sur GitHub Pages</b> : site statique sans build, gratuit, HTTPS fourni, republié par une GitHub Action à chaque push sur <code>main</code>. Il ne contient aucun secret, seulement l'URL publique de l'API.</li>
+  <li><b>API sur Scalingo</b> : PaaS européen couvert par le voucher Ynov, déploiement automatique depuis GitHub (il attend que la CI soit verte), logs et rollback en ligne de commande.</li>
+  <li><b>PostgreSQL en addon Scalingo</b> : même région que l'API, URL de connexion injectée automatiquement dans <code>SCALINGO_POSTGRESQL_URL</code>, donc jamais copiée ni commitée. Le conteneur est éphémère : aucune donnée sur le disque.</li>
+</ul>
+
+<h3>Principales configurations</h3>
+<ul>
+  <li>Monorepo : <code>PROJECT_DIR=api</code> sur l'app Scalingo pour que le buildpack Python construise le dossier <code>api/</code>.</li>
+  <li><code>Procfile</code> : <code>web: uvicorn main:app --host 0.0.0.0 --port $PORT</code> ; version de Python dans <code>.python-version</code> ; dépendances figées dans <code>requirements.txt</code>.</li>
+  <li>Variables d'environnement de l'API : <code>SCALINGO_POSTGRESQL_URL</code> (ajoutée par l'addon), <code>CORS_ORIGINS=https://h129hj.github.io</code>.</li>
+  <li>Frontend : la variable de dépôt GitHub <code>API_URL</code> est écrite dans <code>config.js</code> par le workflow de publication.</li>
+  <li>Sécurité : identifiants de la base uniquement côté API, CORS limité au frontend, validation des entrées par Pydantic, requêtes SQL paramétrées, tout en HTTPS, <code>.env</code> ignoré par Git.</li>
+  <li>CI : ruff + 8 tests pytest lancés contre un vrai PostgreSQL dans GitHub Actions.</li>
+</ul>
+
+<h3>Problème rencontré et résolution</h3>
+<p><b>Premier déploiement de l'API en échec (<code>crashed-error</code>).</b> J'ai créé l'app, ajouté l'addon PostgreSQL et lancé le déploiement aussitôt. Le build passait mais le conteneur plantait au démarrage. Les logs (<code>scalingo --app hugo-tickets-api logs --lines 40</code>) affichaient <code>RuntimeError: DATABASE_URL est requis</code> : la base était encore en création, donc la variable <code>SCALINGO_POSTGRESQL_URL</code> n'existait pas encore, et l'API refuse de démarrer sans base.</p>
+<p><b>Résolution :</b> vérifier que l'addon est <code>running</code> (<code>scalingo addons</code>) et que la variable existe (<code>scalingo env</code>), puis relancer le déploiement : statut <code>success</code> et <code>/health</code> renvoie <code>{"status":"ok"}</code>. Leçon : attendre que la base soit prête avant le premier déploiement, et lire les logs avant de modifier le code.</p>
+
+<h3>Redéploiement automatique (étape 6)</h3>
+<p>Sous-titre de la page modifié (« … suivez sa résolution en temps réel »), commit, push sur <code>main</code> : la GitHub Action a republié le frontend en 21 s et la modification est visible sur l'URL publique sans action manuelle.</p>
+
+<h3>Checklist avant restitution</h3>
+<table>
+  <tr><td>Frontend accessible</td><td>oui, HTTPS</td><td>Backend répond (<code>/health</code>)</td><td>oui</td></tr>
+  <tr><td>Tickets affichés</td><td>oui</td><td>Création d'un ticket</td><td>oui (201)</td></tr>
+  <tr><td>Changement de statut</td><td>oui (200, statut invalide → 422)</td><td>Persistance après actualisation</td><td>oui (PostgreSQL)</td></tr>
+  <tr><td>Documentation versionnée</td><td>README + docs/</td><td>Redéploiement</td><td>oui (push → en ligne)</td></tr>
+  <tr><td>Aucun secret exposé</td><td>oui</td><td>Architecture expliquée</td><td>schéma ci-dessus</td></tr>
+</table>
+
+</body>
+</html>
