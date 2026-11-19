@@ -21,7 +21,11 @@
 
 ## Problème rencontré et résolution
 
-**Problème : pas de Docker sur le poste en local.**
+**Problème : premier déploiement de l'API en échec (`crashed-error`).**
+J'ai créé l'app, ajouté l'addon PostgreSQL et lancé le déploiement juste après. Le build a réussi mais le conteneur plantait au démarrage. Les logs (`scalingo --app hugo-tickets-api logs --lines 40`) montraient `RuntimeError: DATABASE_URL est requis` : la base était encore en cours de création (« Database creation has started »), donc la variable `SCALINGO_POSTGRESQL_URL` n'existait pas encore quand l'API a démarré, et mon code refuse de démarrer sans URL de base.
+**Résolution :** vérifier avec `scalingo --app hugo-tickets-api addons` que l'addon est passé en `running` et avec `env` que `SCALINGO_POSTGRESQL_URL` (et l'alias `DATABASE_URL`) est bien définie, puis relancer le déploiement. Le second déploiement est passé en `success` et `/health` a répondu `{"status":"ok"}`. À retenir : créer la base et attendre qu'elle soit prête avant le premier déploiement, et lire les logs avant de toucher au code.
+
+**Autre problème : pas de Docker sur le poste en local.**
 Le `docker-compose.yml` sert à lancer PostgreSQL, mais le démon Docker n'était pas lancé sur la machine.
 **Résolution :** tests lancés sur un PostgreSQL 16 installé en local (`DATABASE_URL=postgresql:///tickets_test`). Comme toute la config passe par `DATABASE_URL`, rien n'a été changé dans le code.
 
@@ -29,4 +33,5 @@ Le `docker-compose.yml` sert à lancer PostgreSQL, mais le démon Docker n'étai
 
 - 8 tests automatiques (création, liste, validation, changement de statut, statut invalide, 404, filtre et recherche, suppression).
 - Parcours manuel dans le navigateur : création d'un ticket, passage en « en cours » puis « résolu », rechargement de la page, le ticket est toujours là.
-- Redéploiement : à faire une fois en ligne (modification visible du titre, commit, push, nouvelle version sans action manuelle).
+- En production : création d'un ticket, passage en « en cours », statut invalide refusé (422), CORS limité à `https://h129hj.github.io`.
+- Redéploiement : sous-titre de la page modifié, commit, push sur `main`, la GitHub Action a republié le frontend et la modification est visible en ligne sans action manuelle.
