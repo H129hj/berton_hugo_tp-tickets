@@ -1,0 +1,104 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+header {
+  background: #1e3a8a;
+  color: white;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+header h1 { margin: 0; font-size: 1.6rem; }
+.sous-titre { margin: 4px 0 12px; opacity: 0.85; }
+
+.etat {
+  display: inline-block;
+  font-size: 0.85rem;
+  padding: 2px 10px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.15);
+}
+.etat.ok { background: #16a34a; }
+.etat.ko { background: #dc2626; }
+
+main {
+  max-width: 1000px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+}
+
+@media (max-width: 760px) {
+  main { grid-template-columns: 1fr; }
+}
+
+.carte {
+  background: white;
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+h2 { margin-top: 0; font-size: 1.15rem; }
+
+label { display: block; font-weight: 600; margin: 12px 0 4px; }
+
+input, textarea, select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font: inherit;
+}
+
+button {
+  margin-top: 14px;
+  padding: 9px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #1e3a8a;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+button:hover { background: #1e40af; }
+button.secondaire { background: #e5e7eb; color: #374151; margin-top: 0; }
+button.secondaire:hover { background: #d1d5db; }
+
+.message { min-height: 1.2em; margin: 8px 0 0; }
+.message.ok { color: #15803d; }
+.message.ko { color: #b91c1c; }
+
+.entete-liste { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; }
+.filtres { display: flex; gap: 8px; }
+.filtres input, .filtres select { width: auto; }
+
+.liste { list-style: none; padding: 0; margin: 12px 0 0; }
+
+.ticket {
+  border: 1px solid #e5e7eb;
+  border-left: 5px solid #9ca3af;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.ticket h3 { margin: 0 0 4px; font-size: 1rem; }
+.ticket p { margin: 4px 0; overflow-wrap: anywhere; }
+.statut-ouvert { border-left-color: #dc2626; }
+.statut-en_cours { border-left-color: #f59e0b; }
+.statut-resolu { border-left-color: #16a34a; }
+
+.infos { color: #6b7280; font-size: 0.85rem; }
+
+.actions { display: flex; gap: 8px; margin-top: 8px; }
+.actions select { width: auto; }
+
+.vide { color: #6b7280; padding: 8px 0; }
